@@ -600,7 +600,7 @@ class MainOperations:
             MainOperations.wait_q()
 
     @staticmethod
-    def read_response(template, image, name, save_dir=None, auto_align=False):
+    def read_response(template, image, name, save_dir=None, auto_align=False, qrCodeText=""):
         try:
             img = image.copy()
             # origDim = img.shape[:2]
@@ -866,6 +866,9 @@ class MainOperations:
                         boxval0 = all_q_vals[total_q_box_no]
                         detected = per_q_strip_threshold > boxval0
 
+                        if(pt.q_no == "QRCODE"):
+	                        detected = True
+
                         # TODO: add an option to select PLUS SIGN RESPONSE READING
                         # extra_check_rects = []
                         # # [y,y+box_h,x,x+box_w]
@@ -905,6 +908,9 @@ class MainOperations:
                         # TODO Make this part useful! (Abstract visualizer to check status)
                         if detected:
                             q, val = pt.q_no, str(pt.val)
+                            if(pt.q_no == "QRCODE"):
+                                val = qrCodeText
+                                
                             cv2.putText(
                                 final_marked,
                                 val,

@@ -253,6 +253,7 @@ def process_files(omr_files, template, args, out):
     start_time = int(time())
     files_counter = 0
     STATS.files_not_moved = 0
+    qrCodeText = ""
 
     for file_path in omr_files:
         files_counter += 1
@@ -264,6 +265,11 @@ def process_files(omr_files, template, args, out):
         logger.info(
             f"\n({files_counter}) Opening image: \t{file_path}\tResolution: {in_omr.shape}"
         )
+
+        qrCodeDetector = cv2.QRCodeDetector()
+        decodedText, points, _ = qrCodeDetector.detectAndDecode(in_omr)
+        if points is not None:
+            qrCodeText = decodedText
 
         # TODO: Get rid of saveImgList
         for i in range(ImageUtils.save_image_level):
@@ -315,6 +321,7 @@ def process_files(omr_files, template, args, out):
             name=file_id,
             save_dir=save_dir,
             auto_align=args["autoAlign"],
+            qrCodeText=qrCodeText
         )
 
         # concatenate roll nos, set unmarked responses, etc
